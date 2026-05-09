@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Engineer Internship Assessment</title>
+    <!-- 使用 PapaParse 库解析 CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; background-color: #f9f9f9; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; background: #fff; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #3498db; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .result-val { font-weight: bold; color: #e74c3c; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Table 1: Input Data</h2>
+    <table id="table1">
+        <thead>
+            <tr>
+                <th>Index #</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+
+    <h2>Table 2: Processed Data</h2>
+    <table id="table2">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Alpha</td><td id="alpha" class="result-val">Processing...</td></tr>
+            <tr><td>Beta</td><td id="beta" class="result-val">Processing...</td></tr>
+            <tr><td>Charlie</td><td id="charlie" class="result-val">Processing...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    Papa.parse("Table_Input.csv", {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+            const data = results.data;
+            const table1Body = document.querySelector("#table1 tbody");
+            const valMap = {};
+            data.forEach(row => {
+                const index = row["Index #"];
+                const value = parseInt(row["Value"]);
+                
+                if (index && !isNaN(value)) {
+                    valMap[index] = value;
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `<td>${index}</td><td>${value}</td>`;
+                    table1Body.appendChild(tr);
+                }
+            });
+            const alphaVal = (valMap["A5"] || 0) + (valMap["A20"] || 0);
+            const betaVal = (valMap["A15"] || 0) / (valMap["A7"] || 1);
+            const charlieVal = (valMap["A13"] || 0) * (valMap["A12"] || 0);
+            document.getElementById("alpha").innerText = Math.floor(alphaVal);
+            document.getElementById("beta").innerText = Math.floor(betaVal);
+            document.getElementById("charlie").innerText = Math.floor(charlieVal);
+        }
+    });
+</script>
+
+</body>
+</html>
