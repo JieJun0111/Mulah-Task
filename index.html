@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mulah Task</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; padding: 40px; line-height: 1.6; color: #333; }
+        .wrapper { max-width: 600px; margin: auto; }
+        h2 { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 30px; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .highlight { font-weight: bold; color: #000000; }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <h2>Table 1</h2>
+    <table id="table1">
+        <thead>
+            <tr>
+                <th>Index #</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+
+    <h2>Table 2</h2>
+    <table id="table2">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Alpha</td><td id="alpha" class="highlight">Loading...</td></tr>
+            <tr><td>Beta</td><td id="beta" class="highlight">Loading...</td></tr>
+            <tr><td>Charlie</td><td id="charlie" class="highlight">Loading...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    Papa.parse("Table_Input.csv", {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+            const data = results.data;
+            const table1Body = document.querySelector("#table1 tbody");
+            const valMap = {};
+
+            data.forEach(row => {
+                const idx = row["Index #"];
+                const val = parseInt(row["Value"]);
+                
+                if (idx && !isNaN(val)) {
+                    valMap[idx] = val;
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `<td>${idx}</td><td>${val}</td>`;
+                    table1Body.appendChild(tr);
+                }
+            });
+
+            const alphaVal = (valMap["A5"] || 0) + (valMap["A20"] || 0);
+            const betaVal = (valMap["A15"] || 0) / (valMap["A7"] || 1);
+            const charlieVal = (valMap["A13"] || 0) * (valMap["A12"] || 0);
+            document.getElementById("alpha").innerText = Math.floor(alphaVal);
+            document.getElementById("beta").innerText = Math.floor(betaVal);
+            document.getElementById("charlie").innerText = Math.floor(charlieVal);
+        }
+    });
+</script>
+
+</body>
+</html>
